@@ -29,9 +29,14 @@ app.get('/', (req, res) => {
   res.send('Hello from the backend!');
 });
 
+app.post('/lodgecomplaint', (req, res) => {
+  console.log("\nComplaint: ", req.body);
+  res.send("complaint lodged");
+});
+
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-  });
+  console.log(`Server is running on port ${port}`);
+});
 
 app.use('/uploads', express.static('uploads'));
 //Router middleware
@@ -41,4 +46,4 @@ const issueRoutes = require('./routes/issueRoutes')
 // Use middle ware 
 
 app.use('/api/auth', authRoutes);
-app.use('/api/auth',issueRoutes);
+app.use('/api/auth', issueRoutes);
