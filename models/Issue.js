@@ -2,6 +2,7 @@
 const mongoose = require('mongoose');
 
 const issueSchema = new mongoose.Schema({
+  sectionName:{type:String},  
   faultType: { type: String, required: true },
   deviceName: { type: String, required: true },
   deviceCode: { type: String, required: true },
