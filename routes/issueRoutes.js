@@ -16,7 +16,9 @@ const uploadDir = '../'
 const multer = require('multer');
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "../client/src/images/");
+    //specify the path of the dir where the uploaded images are stored
+    // cb(null, "../client/src/images/");
+    cb(null, "../Restaurant_frontend/src/images/");
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now();
