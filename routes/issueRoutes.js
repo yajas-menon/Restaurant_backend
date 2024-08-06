@@ -8,6 +8,8 @@ const path = require('path');
 const Issue = require('../models/Issue');
 
 
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 
 
