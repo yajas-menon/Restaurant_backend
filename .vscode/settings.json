@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/0aa126b3-272c-45c3-9d99-8597e360e015/resourceGroups/HiAI/providers/Microsoft.Web/sites/restaurantbackend",
+    "appService.deploySubpath": "."
+}

@@ -29,11 +29,6 @@ app.get('/', (req, res) => {
   res.send('Hello from the backend!');
 });
 
-app.post('/lodgecomplaint', (req, res) => {
-  console.log("\nComplaint: ", req.body);
-  res.send("complaint lodged");
-});
-
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
