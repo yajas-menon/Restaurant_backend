@@ -8,8 +8,8 @@ const path = require('path');
 const Issue = require('../models/Issue');
 
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+
+
 
 // Azure Blob Storage configuration
 const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_CONNECTION_STRING);
