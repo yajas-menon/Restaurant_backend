@@ -110,19 +110,19 @@ router.get('/metrics', async (req, res) => {
     const metrics = {
       issueFixed: {
         bulbs: issues.filter(issue => issue.deviceName === 'bulb' && issue.status === 'Resolved').length,
-        wifi: issues.filter(issue => issue.deviceName === 'WiFi' && issue.status === 'Resolved').length,
+        wifi: issues.filter(issue => issue.deviceName === 'Wifi' && issue.status === 'Resolved').length,
         acs: issues.filter(issue => issue.deviceName === 'ac' && issue.status === 'Resolved').length,
         taps: issues.filter(issue => issue.deviceName === 'taps' && issue.status === 'Resolved').length,
       },
       openIssues: {
         bulbs: issues.filter(issue => issue.deviceName === 'bulb' && issue.status === 'Pending').length,
-        wifi: issues.filter(issue => issue.deviceName === 'WiFi' && issue.status === 'Pending').length,
+        wifi: issues.filter(issue => issue.deviceName === 'Wifi' && issue.status === 'Pending').length,
         acs: issues.filter(issue => issue.deviceName === 'ac' && issue.status === 'Pending').length,
         taps: issues.filter(issue => issue.deviceName === 'taps' && issue.status === 'Pending').length,
       },
       pendingIssues: {
         bulbs: issues.filter(issue => issue.deviceName === 'bulb' && issue.status === 'Pending Approval').length,
-        wifi: issues.filter(issue => issue.deviceName === 'WiFi' && issue.status === 'Pending Approval').length,
+        wifi: issues.filter(issue => issue.deviceName === 'Wifi' && issue.status === 'Pending Approval').length,
         acs: issues.filter(issue => issue.deviceName === 'ac' && issue.status === 'Pending Approval').length,
         taps: issues.filter(issue => issue.deviceName === 'taps' && issue.status === 'Pending Approval').length,
       },
