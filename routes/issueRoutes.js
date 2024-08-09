@@ -107,28 +107,37 @@ router.get('/metrics', async (req, res) => {
   try {
     const issues = await Issue.find();
 
-    // Get a list of unique device names from the issues
-    const deviceNames = [...new Set(issues.map(issue => issue.deviceName))];
-
-    // Initialize metrics object
     const metrics = {
-      issueFixed: {},
-      openIssues: {},
-      pendingIssues: {},
-      rejectedIssues: {},
+      issueFixed: {
+        bulbs: issues.filter(issue => issue.deviceName === 'bulb' && issue.status === 'Resolved').length,
+        wifi: issues.filter(issue => issue.deviceName === 'Wifi' && issue.status === 'Resolved').length,
+        acs: issues.filter(issue => issue.deviceName === 'ac' && issue.status === 'Resolved').length,
+        taps: issues.filter(issue => issue.deviceName === 'taps' && issue.status === 'Resolved').length,
+      },
+      openIssues: {
+        bulbs: issues.filter(issue => issue.deviceName === 'bulb' && issue.status === 'Pending').length,
+        wifi: issues.filter(issue => issue.deviceName === 'Wifi' && issue.status === 'Pending').length,
+        acs: issues.filter(issue => issue.deviceName === 'ac' && issue.status === 'Pending').length,
+        taps: issues.filter(issue => issue.deviceName === 'taps' && issue.status === 'Pending').length,
+      },
+      pendingIssues: {
+        bulbs: issues.filter(issue => issue.deviceName === 'bulb' && issue.status === 'Pending Approval').length,
+        wifi: issues.filter(issue => issue.deviceName === 'Wifi' && issue.status === 'Pending Approval').length,
+        acs: issues.filter(issue => issue.deviceName === 'ac' && issue.status === 'Pending Approval').length,
+        taps: issues.filter(issue => issue.deviceName === 'taps' && issue.status === 'Pending Approval').length,
+      },
+      
+      rejectedIssues: {
+        bulbs: issues.filter(issue => issue.deviceName === 'bulb' && issue.status === 'Rejected').length,
+        wifi: issues.filter(issue => issue.deviceName === 'wifi' && issue.status === 'Rejected').length,
+        acs: issues.filter(issue => issue.deviceName === 'ac' && issue.status === 'Rejected').length,
+        taps: issues.filter(issue => issue.deviceName === 'taps' && issue.status === 'Rejected').length,
+      },
     };
 
-    // Populate the metrics object dynamically based on the device names
-    deviceNames.forEach(deviceName => {
-      metrics.issueFixed[deviceName] = issues.filter(issue => issue.deviceName === deviceName && issue.status === 'Resolved').length;
-      metrics.openIssues[deviceName] = issues.filter(issue => issue.deviceName === deviceName && issue.status === 'Pending').length;
-      metrics.pendingIssues[deviceName] = issues.filter(issue => issue.deviceName === deviceName && issue.status === 'Pending Approval').length;
-      metrics.rejectedIssues[deviceName] = issues.filter(issue => issue.deviceName === deviceName && issue.status === 'Rejected').length;
-    });
-
-    res.json(metrics);
+    res.json({ metrics });
   } catch (error) {
-    res.status(500).send('Server error');
+    res.status(500).json({ error: error.message });
   }
 });
 
