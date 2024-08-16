@@ -1,33 +1,21 @@
-// models/Issue.js
 const mongoose = require('mongoose');
 
 const issueSchema = new mongoose.Schema({
-  sectionName: { 
-    type: String, 
-    required: true },
-  faultType: {
-     type: String, 
-     required: true },
-  deviceName: {
-     type: String, 
-     required: true },
-  deviceCode: { 
-    type: String, 
-    required: true },
-  description: { 
-    type: String, 
-    required: true },
-  issuePhoto: { 
-    type: String, 
-    required: true },
-  resolvedPhoto: { 
-    type: String 
-  }, // Add this field for resolved photo
-  status: { 
-    type: String, 
-    default: 'Pending' 
-  } // Add this field for issue status
+    sectionName:String,
+    deviceName:String,
+    deviceCode: String,
+    description: String,
+    issuePhoto: String,
+    resolvedPhoto: String,
+    status: {
+        type: String,
+        default: 'Open',
+        enum: ['Open', 'Pending Approval', 'Resolved', 'Rejected']
+    },
+    remark: {
+        type: String,
+        default: ''
+    }
 }, { timestamps: true });
 
-const Issue = mongoose.model('Issue', issueSchema);
-module.exports = Issue;
+module.exports = mongoose.model('Issue', issueSchema);

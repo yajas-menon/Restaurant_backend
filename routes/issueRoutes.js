@@ -157,8 +157,25 @@ router.get('/section-metrics', async (req, res) => {
   }
 });
 
+router.post('/add-remark/:id', async (req, res) => {
+  try {
+      const { id } = req.params;
+      const { remark } = req.body;
 
+      const issue = await Issue.findById(id);
+      if (!issue) {
+          return res.status(404).json({ message: 'Issue not found' });
+      }
 
+      issue.remark = remark;
+      issue.status = 'Open'; // Ensure status stays 'Open' when adding a remark
+      await issue.save();
+
+      res.status(200).json({ message: 'Remark added successfully', data: issue });
+  } catch (error) {
+      res.status(500).json({ message: 'Error adding remark', error });
+  }
+});
 
 
 
