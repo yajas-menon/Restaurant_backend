@@ -103,57 +103,42 @@ router.post('/update-status/:id', async (req, res) => {
   }
 });
 
-router.get('/metrics', async (req, res) => {
+// Endpoint to User Dashboard
+router.get('/summary', async (req, res) => {
   try {
-    const issues = await Issue.find();
+    const summary = await Issue.aggregate([
+      {
+        $group: {
+          _id: '$status',
+          count: { $sum: 1 }
+        }
+      }
+    ]);
 
-    const metrics = {
-      issueFixed: {
-        bulbs: issues.filter(issue => issue.deviceName === 'bulb' && issue.status === 'Resolved').length,
-        wifi: issues.filter(issue => issue.deviceName === 'Wifi' && issue.status === 'Resolved').length,
-        acs: issues.filter(issue => issue.deviceName === 'ac' && issue.status === 'Resolved').length,
-        taps: issues.filter(issue => issue.deviceName === 'taps' && issue.status === 'Resolved').length,
-      },
-      openIssues: {
-        bulbs: issues.filter(issue => issue.deviceName === 'bulb' && issue.status === 'Pending').length,
-        wifi: issues.filter(issue => issue.deviceName === 'Wifi' && issue.status === 'Pending').length,
-        acs: issues.filter(issue => issue.deviceName === 'ac' && issue.status === 'Pending').length,
-        taps: issues.filter(issue => issue.deviceName === 'taps' && issue.status === 'Pending').length,
-      },
-      pendingIssues: {
-        bulbs: issues.filter(issue => issue.deviceName === 'bulb' && issue.status === 'Pending Approval').length,
-        wifi: issues.filter(issue => issue.deviceName === 'Wifi' && issue.status === 'Pending Approval').length,
-        acs: issues.filter(issue => issue.deviceName === 'ac' && issue.status === 'Pending Approval').length,
-        taps: issues.filter(issue => issue.deviceName === 'taps' && issue.status === 'Pending Approval').length,
-      },
-      
-      rejectedIssues: {
-        bulbs: issues.filter(issue => issue.deviceName === 'bulb' && issue.status === 'Rejected').length,
-        wifi: issues.filter(issue => issue.deviceName === 'wifi' && issue.status === 'Rejected').length,
-        acs: issues.filter(issue => issue.deviceName === 'ac' && issue.status === 'Rejected').length,
-        taps: issues.filter(issue => issue.deviceName === 'taps' && issue.status === 'Rejected').length,
-      },
+    // Create a structured response
+    const result = {
+      issueFixed: 0,
+      openIssues: 0,
+      rejectedIssues: 0,
+      pendingIssues: 0
     };
 
-    res.json({ metrics });
+    summary.forEach(item => {
+      if (item._id === 'Resolved') {
+        result.issueFixed = item.count;
+      } else if (item._id === 'Open' || item._id === 'Pending Approval') {
+        result.openIssues += item.count;
+      } else if (item._id === 'Rejected') {
+        result.rejectedIssues = item.count;
+      } else if (item._id === 'Pending Approval') {
+        result.pendingIssues = item.count;
+      }
+    });
+
+    res.json(result);
   } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-router.get('/section-metrics', async (req, res) => {
-  try {
-    const sections = ['kitchen', 'dining', 'room', 'bathroom', 'reception'];
-    const metrics = {};
-
-    for (const section of sections) {
-      metrics[section] = await Issue.countDocuments({ sectionName: section, status: { $ne: 'Resolved' } });
-    }
-
-    res.json({ metrics });
-  } catch (error) {
-    console.error('Error fetching section metrics:', error);
-    res.status(500).send('Server error');
+    console.error('Error fetching issue summary:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -176,6 +161,38 @@ router.post('/add-remark/:id', async (req, res) => {
       res.status(500).json({ message: 'Error adding remark', error });
   }
 });
+
+// Graph Metrics 
+router.get('/total-issues', async (req, res) => {
+  try {
+      const totalIssuesCount = await Issue.countDocuments({});
+      res.json({ totalIssues: totalIssuesCount });
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({ msg: 'Error fetching total issues count' });
+  }
+});
+
+// Route to get the count of issues based on status (for Issues WIP)
+router.get('/issues-status', async (req, res) => {
+  try {
+      const issues = await Issue.find({
+          status: { $in: ['Pending', 'Open', 'Pending Approval','Resolved','Rejected'] }
+      });
+
+      // Group issues by status
+      const issuesGroupedByStatus = issues.reduce((acc, issue) => {
+          acc[issue.status] = (acc[issue.status] || 0) + 1;
+          return acc;
+      }, {});
+
+      res.json(issuesGroupedByStatus);
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({ msg: 'Error fetching issues by status' });
+  }
+});
+
 
 
 
